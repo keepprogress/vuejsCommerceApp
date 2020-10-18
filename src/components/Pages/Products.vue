@@ -2,7 +2,9 @@
   <div>
     <loading :active.sync="isLoading"></loading>
     <div class="text-right mt-4">
-      <button class="btn btn-primary" @click="openModal(true)">建立新的產品</button>
+      <button class="btn btn-primary" @click="openModal(true)">
+        建立新的產品
+      </button>
     </div>
 
     <table class="table mt-4">
@@ -21,22 +23,44 @@
           <td>{{ item.category }}</td>
           <td>{{ item.title }}</td>
           <td class="text-right">
-            {{ item.origin_price }}
+            {{ item.origin_price | currency }}
           </td>
           <td class="text-right">
-            {{ item.price }}
+            {{ item.price | currency}}
           </td>
           <td>
             <span v-if="item.is_enabled" class="text-success">啟用</span>
             <span v-else>未啟用</span>
           </td>
           <td>
-            <button class="btn btn-outline-primary btn-sm" 
-            @click="openModal(false, item)">編輯</button>
+            <button
+              class="btn btn-outline-primary btn-sm"
+              @click="openModal(false, item)"
+            >
+              編輯
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item" :class="{'disabled': !pagination.has_pre }">
+          <a class="page-link" href="#" aria-label="Previous" @click.prevent="getProducts(pagination.current_page - 1)">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item" v-for = "page in pagination.total_pages" :key = "page"
+        :class = "{'active': pagination.current_page === page}">
+          <a class="page-link" href="#" @click.prevent="getProducts(page)">{{ page }}</a>
+          </li>
+        <li class="page-item" :class="{'disabled': !pagination.has_next }">
+          <a class="page-link" href="#" aria-label="Next" @click.prevent="getProducts(pagination.current_page + 1)">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
     <!-- Modal -->
     <div
       class="modal fade"
@@ -77,14 +101,17 @@
                 <div class="form-group">
                   <label for="customFile"
                     >或 上傳圖片
-                    <i class="fas fa-spinner fa-pulse" v-if="status.fileUploading"></i>
+                    <i
+                      class="fas fa-spinner fa-pulse"
+                      v-if="status.fileUploading"
+                    ></i>
                   </label>
                   <input
                     type="file"
                     id="customFile"
                     class="form-control"
                     ref="files"
-                    @change = "uploadFile"
+                    @change="uploadFile"
                   />
                 </div>
                 <img
@@ -182,7 +209,6 @@
                       :true-value="1"
                       :false-value="0"
                       id="is_enabled"
-                      
                     />
                     <label class="form-check-label" for="is_enabled">
                       是否啟用
@@ -200,7 +226,13 @@
             >
               取消
             </button>
-            <button type="button" class="btn btn-primary" @click.prevent="updateProduct">確認</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click.prevent="updateProduct"
+            >
+              確認
+            </button>
           </div>
         </div>
       </div>
@@ -216,6 +248,7 @@ export default {
   data() {
     return {
       products: [],
+      pagination: {},
       tempProduct: {},
       isNew: false,
       isLoading: false,
@@ -225,8 +258,8 @@ export default {
     };
   },
   methods: {
-    getProducts() {
-      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/products`; //'https://vue-course-api.hexschool.io/api/申請的 API 路徑/products' //:api_path  ==> 專屬API名稱
+    getProducts(page = 1) { // ESlint 預設1 有數值用數值
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/products?page=${page}`; //'https://vue-course-api.hexschool.io/api/申請的 API 路徑/products' //:api_path  ==> 專屬API名稱
       const vm = this;
       console.log(process.env.APIPATH, process.env.CUSTOMPATH);
       vm.isLoading = true;
@@ -234,63 +267,66 @@ export default {
         console.log(response.data);
         vm.isLoading = false;
         vm.products = response.data.products;
+        vm.pagination = response.data.pagination;
       });
     },
     openModal(isNew, item) {
-     
       if (isNew) {
-          this.tempProduct = {};
-          this.isNew = true;
+        this.tempProduct = {};
+        this.isNew = true;
       } else {
-          this.tempProduct = Object.assign({}, item);
-          this.isNew = false;
+        this.tempProduct = Object.assign({}, item);
+        this.isNew = false;
       }
-       $("#productModal").modal("show");
+      $("#productModal").modal("show");
     },
     updateProduct() {
       let api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product`; //'https://vue-course-api.hexschool.io/api/申請的 API 路徑/products' //:api_path  ==> 專屬API名稱
-      let httpMethod = 'post';
+      let httpMethod = "post";
       const vm = this;
       if (!vm.isNew) {
-          api= `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${vm.tempProduct.id}`;
-          httpMethod = 'put';
+        api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${vm.tempProduct.id}`;
+        httpMethod = "put";
       }
       console.log(process.env.APIPATH, process.env.CUSTOMPATH);
-      this.$http[httpMethod](api, { data:vm.tempProduct}).then((response) => {
+      this.$http[httpMethod](api, { data: vm.tempProduct }).then((response) => {
         console.log(response.data);
         if (response.data.success) {
-            $('#productModal').modal('hide');
-            vm.getProducts();
+          $("#productModal").modal("hide");
+          vm.getProducts();
         } else {
-            $('#productModal').modal('hide');
-            vm.getProducts();
-            console.log('新增失敗')
+          $("#productModal").modal("hide");
+          vm.getProducts();
+          console.log("新增失敗");
         }
         // vm.products = response.data.products;
       });
     },
     uploadFile() {
-        console.log(this);
-        const uploadedFile = this.$refs.files.files[0]
-        const vm = this;
-        const formData = new FormData();
-        formData.append('file-to-upload', uploadedFile);
-        const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`;
-        vm.status.fileUploading = true;
-        this.$http.post(url, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        }).then((response) => {
-            console.log(response.data);
-            vm.status.fileUploading = false;
-            if (response.data.success) {
-                // vm.tempProduct.imageUrl = response.data.imageUrl;
-                // console.log(vm.tempProduct.imgUrl);
-                vm.$set(vm.tempProduct, 'imageUrl' ,response.data.imageUrl);
-            }
-            
+      console.log(this);
+      const uploadedFile = this.$refs.files.files[0];
+      const vm = this;
+      const formData = new FormData();
+      formData.append("file-to-upload", uploadedFile);
+      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/upload`;
+      vm.status.fileUploading = true;
+      this.$http
+        .post(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         })
+        .then((response) => {
+          console.log(response.data);
+          vm.status.fileUploading = false;
+          if (response.data.success) {
+            // vm.tempProduct.imageUrl = response.data.imageUrl;
+            // console.log(vm.tempProduct.imgUrl);
+            vm.$set(vm.tempProduct, "imageUrl", response.data.imageUrl);
+          } else {
+            this.$bus.$emit("message:push", response.data.message, "danger");
+          }
+        });
     },
   },
   created() {

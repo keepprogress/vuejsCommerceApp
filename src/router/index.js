@@ -6,6 +6,7 @@ import VueRouter from 'vue-router';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Pages/Login';
 import Products from '@/components/Pages/Products';
+import CoustmerOrders from '@/components/Pages/CustomerOrders';
 
 //自訂的元件
 
@@ -39,6 +40,19 @@ export default new VueRouter({
                     name: 'Products',
                     component: Products,
                     meta: { requiresAuth: true },
+                },
+            ],
+        },
+        {
+            name: 'Dashboard',
+            path: '/',
+            component: Dashboard,
+            
+            children: [
+                {
+                    path: 'customer_order',
+                    name: 'CoustmerOrder',
+                    component: CoustmerOrders,
                 },
             ],
         },
