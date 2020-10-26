@@ -6,6 +6,8 @@ import VueRouter from 'vue-router';
 import Dashboard from '@/components/Dashboard';
 import Login from '@/components/Pages/Login';
 import Products from '@/components/Pages/Products';
+import Orders from '@/components/Pages/Orders';
+import Coupons from '@/components/Pages/Coupons';
 import CoustmerOrders from '@/components/Pages/CustomerOrders';
 
 //自訂的元件
@@ -39,6 +41,18 @@ export default new VueRouter({
                     path: 'products',
                     name: 'Products',
                     component: Products,
+                    meta: { requiresAuth: true },
+                },
+                {
+                    path: 'orders',
+                    name: 'Orders',
+                    component: Orders,
+                    // meta: { requiresAuth: true },
+                },
+                {
+                    path: 'coupons',
+                    name: 'Coupons',
+                    component: Coupons,
                     meta: { requiresAuth: true },
                 },
             ],

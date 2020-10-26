@@ -11,6 +11,7 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 import router from './router';
 import './bus';
 import currencyFilter from './filters/currency';
+import Datefilter from './filters/date';
 
 
 Vue.use(VueAxios, axios);
@@ -19,6 +20,7 @@ Vue.config.productionTip = false;
 Vue.component('Loading', Loading);
 axios.defaults.withCredentials = true;
 Vue.filter('currency', currencyFilter);
+Vue.filter('datetransform_from_timestamp', Datefilter);
 
 /* eslint-disable no-new */
 new Vue({
@@ -44,7 +46,7 @@ router.beforeEach((to, from, next) => {
             next();
         } else {
           next({
-            paath: '/login',
+            path: '/login',
           })
         }
       });
