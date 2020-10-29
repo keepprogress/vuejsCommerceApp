@@ -6,56 +6,80 @@
         建立新的產品
       </button>
     </div>
-
-    <table class="table mt-4">
-      <thead>
-        <tr>
-          <th width="120">分類</th>
-          <th>產品名稱</th>
-          <th width="120">原價</th>
-          <th width="120">售價</th>
-          <th width="100">是否啟用</th>
-          <th width="80">編輯</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in products" :key="item.id">
-          <td>{{ item.category }}</td>
-          <td>{{ item.title }}</td>
-          <td class="text-right">
-            {{ item.origin_price | currency }}
-          </td>
-          <td class="text-right">
-            {{ item.price | currency}}
-          </td>
-          <td>
-            <span v-if="item.is_enabled" class="text-success">啟用</span>
-            <span v-else>未啟用</span>
-          </td>
-          <td>
-            <button
-              class="btn btn-outline-primary btn-sm"
-              @click="openModal(false, item)"
-            >
-              編輯
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+   
+      <table class="table mt-4">
+        <thead>
+          <tr>
+            <th class="col-1-sm">分類</th>
+            <th class="col-2-sm">產品名稱</th>
+            <th class="col-1-sm">原價</th>
+            <th class="col-1-sm">售價</th>
+            <th class="col-1-sm">是否啟用</th>
+            <th class="col-1-sm">編輯</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in products" :key="item.id">
+            <td>{{ item.category }}</td>
+            <td>{{ item.title }}</td>
+            <td class="text-right">
+              {{ item.origin_price | currency }}
+            </td>
+            <td class="text-right">
+              {{ item.price | currency }}
+            </td>
+            <td>
+              <span v-if="item.is_enabled" class="text-success">啟用</span>
+              <span v-else>未啟用</span>
+            </td>
+            <td>
+              <button
+                class="btn btn-outline-primary btn-sm"
+                @click="openModal(false, item)"
+              >
+                編輯
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-danger btn-sm"
+                @click="deleteProduct(item.id)"
+              >
+                <i class="far fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
     <nav aria-label="Page navigation example">
       <ul class="pagination">
-        <li class="page-item" :class="{'disabled': !pagination.has_pre }">
-          <a class="page-link" href="#" aria-label="Previous" @click.prevent="getProducts(pagination.current_page - 1)">
+        <li class="page-item" :class="{ disabled: !pagination.has_pre }">
+          <a
+            class="page-link"
+            href="#"
+            aria-label="Previous"
+            @click.prevent="getProducts(pagination.current_page - 1)"
+          >
             <span aria-hidden="true">&laquo;</span>
           </a>
         </li>
-        <li class="page-item" v-for = "page in pagination.total_pages" :key = "page"
-        :class = "{'active': pagination.current_page === page}">
-          <a class="page-link" href="#" @click.prevent="getProducts(page)">{{ page }}</a>
-          </li>
-        <li class="page-item" :class="{'disabled': !pagination.has_next }">
-          <a class="page-link" href="#" aria-label="Next" @click.prevent="getProducts(pagination.current_page + 1)">
+        <li
+          class="page-item"
+          v-for="page in pagination.total_pages"
+          :key="page"
+          :class="{ active: pagination.current_page === page }"
+        >
+          <a class="page-link" href="#" @click.prevent="getProducts(page)">{{
+            page
+          }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: !pagination.has_next }">
+          <a
+            class="page-link"
+            href="#"
+            aria-label="Next"
+            @click.prevent="getProducts(pagination.current_page + 1)"
+          >
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
@@ -258,7 +282,8 @@ export default {
     };
   },
   methods: {
-    getProducts(page = 1) { // ESlint 預設1 有數值用數值
+    getProducts(page = 1) {
+      // ESlint 預設1 有數值用數值
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/products?page=${page}`; //'https://vue-course-api.hexschool.io/api/申請的 API 路徑/products' //:api_path  ==> 專屬API名稱
       const vm = this;
       console.log(process.env.APIPATH, process.env.CUSTOMPATH);
@@ -327,6 +352,14 @@ export default {
             this.$bus.$emit("message:push", response.data.message, "danger");
           }
         });
+    },
+    deleteProduct(id) {
+      let api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/admin/product/${id}`;
+      console.log(id);
+      this.$http.delete(api).then(() => {
+        this.getProducts();
+        console.log("已成功刪除該產品");
+      });
     },
   },
   created() {

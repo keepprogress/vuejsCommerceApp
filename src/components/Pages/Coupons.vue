@@ -224,7 +224,8 @@ export default {
         this.tempCoupon = Object.assign({}, item);
         this.isNew = false;
         const dateAndTime = new Date(vm.tempCoupon.due_date * 1000).toISOString().split('T');
-        vm.due_date = dateAndTime[0];
+        vm.due_date = '2020-11-25';
+        console.log(dateAndTime[0])
       }
       $("#couponModal").modal("show");
     },

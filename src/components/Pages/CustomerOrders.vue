@@ -240,11 +240,13 @@ export default {
     },
     removeCartItem(id) {
       const vm = this;
-      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products/cart`;
+      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`;
       vm.isLoading = true;
       this.$http.delete(url).then(() => {
+        vm.getCart();
         // vm.products = response.data.products;
         vm.isLoading = false;
+        console.log("已成功將該項目從購物車移除")
       });
     },
     addCouponCode() {
