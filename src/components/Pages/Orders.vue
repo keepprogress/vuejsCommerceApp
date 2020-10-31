@@ -52,9 +52,7 @@ export default {
       console.log(process.env.APIPATH, process.env.CUSTOMPATH);
       vm.isLoading = true;
       this.$http.get(api).then((response) => {
-
         console.log(response.data);
-
         console.log(response.data.orders[0].user.email);
         vm.isLoading = false;
         vm.orders = response.data.orders;
