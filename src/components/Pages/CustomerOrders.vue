@@ -364,18 +364,19 @@ export default {
     createOrder() {
     const vm = this;
     const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order`;
-    const coupon = {
-      code: vm.form,
-    };
+    const order = vm.form;
     // vm.isLoading = true;
     this.$validator.validate().then((result) =>{
       if(result){
         this.$http
       .post(url, {
-        data: coupon,
+        data: order,
       })
       .then((response) => {
         console.log("訂單已生成", response);
+        if (response.data.success) {
+          vm.$router.push(`/customer_checkout/${response.data.orderId}`)
+        }
         vm.getCart();
         // vm.products = response.data.products;
         vm.isLoading = false;

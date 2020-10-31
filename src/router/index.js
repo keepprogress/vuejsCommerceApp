@@ -8,7 +8,9 @@ import Login from '@/components/Pages/Login';
 import Products from '@/components/Pages/Products';
 import Orders from '@/components/Pages/Orders';
 import Coupons from '@/components/Pages/Coupons';
-import CoustmerOrders from '@/components/Pages/CustomerOrders';
+import CustomerOrders from '@/components/Pages/CustomerOrders';
+import CustomerCheckout from '@/components/Pages/CustomerCheckout';
+
 
 //自訂的元件
 
@@ -65,8 +67,13 @@ export default new VueRouter({
             children: [
                 {
                     path: 'customer_order',
-                    name: 'CoustmerOrder',
-                    component: CoustmerOrders,
+                    name: 'CustomerOrder',
+                    component: CustomerOrders,
+                },
+                {
+                    path: 'customer_checkout/:orderId',
+                    name: 'CustomerCheckout',
+                    component: CustomerCheckout,
                 },
             ],
         },
