@@ -1,6 +1,8 @@
 # vue_dashboard_record
 
 > A Vue.js project
+> 
+https://keepprogress.github.io/vuejsCommerceApp/
 
 ## Build Setup
 
